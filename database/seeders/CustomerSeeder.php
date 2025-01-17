@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Address;
 use App\Models\Customer;
+use App\Models\Service;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,40 +15,33 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = Customer::create([
-            'username' => 'domo00000',
-            'password' => bcrypt('1'),
-            'phone' => '000000000',
-            'email' => 'test@test.ua',
-            'language' => 'uk',
-            'theme' => 'light',
-            'device_id' => '',
-        ]);
+        for ($i = 1; $i <= 5; $i++) {
+            $customer = Customer::create([
+                'username' => 'user' . $i,
+                'password' => bcrypt('password' . $i),
+                'phone' => '123456789' . $i,
+                'email' => 'user' . $i . '@example.com',
+                'language' => 'uk',
+                'theme' => 'light',
+                'device_id' => 'device_' . $i,
+            ]);
 
-        $address1 = $user->addresses()->create([
-            'address' => '34 кв. Академіка Ломоносова, 36',
-            'status' => 'active',
-            'tariff' => 'Unlim 1000',
-            'balance' => 230,
-        ]);
+            for ($j = 1; $j <= 2; $j++) {
+                $address = Address::create([
+                    'customer_id' => $customer->id,
+                    'address' => 'Street ' . $j . ', City ' . $i,
+                    'status' => $j % 2 == 0 ? 'active' : 'inactive',
+                    'tariff' => 'Unlim 1000',
+                    'balance' => rand(-100, 500),
+                ]);
 
-        $address2 = $user->addresses()->create([
-            'address' => '25 кв. Богдана Хмельницького, 12',
-            'status' => 'inactive',
-            'tariff' => 'Unlim 1000',
-            'balance' => -1,
-        ]);
-
-        $address1->services()->create([
-            'internet' => 'Unlim 1000',
-            'tv' => 'omega 60',
-            'ip' => '10.10.10.10',
-        ]);
-
-        $address2->services()->create([
-            'internet' => 'Unlim 1000',
-            'tv' => 'omega 60',
-            'ip' => '10.10.10.10',
-        ]);
+                Service::create([
+                    'address_id' => $address->id,
+                    'internet' => 'Unlim 1000',
+                    'tv' => 'Omega ' . rand(50, 100),
+                    'ip' => '192.168.1.' . rand(1, 255),
+                ]);
+            }
+        }
     }
 }

@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-    public function getCustomerData()
+    public function getCustomerData($id)
     {
-        $user = Customer::with('addresses.services')->first();
-        return new CustomerResource($user);
+        $customer = Customer::with('addresses.services')->findOrFail($id);
+        return new CustomerResource($customer);
     }
 }
